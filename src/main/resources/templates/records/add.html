@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>Add an expenseEntity</h1>
+<form th:action="@{/records/add}" method="post" th:object="${expenseForm}">
+    <label for="name">Name</label>
+    <input id="name" type="text" th:field="*{name}"><br/>
+    <label for="amount">Amount</label>
+    <input id="amount" type="number" th:field="*{amount}"><br/>
+    <button type="submit">Add a expenseEntity record</button>
+
+</form>
+
+</body>
+</html>

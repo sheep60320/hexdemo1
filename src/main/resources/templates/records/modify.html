@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<h1>修改消費紀錄</h1>
+<form th:action="@{/records/modify}" method="post" th:object="${expenseForm}">
+    <input type="hidden" th:field="*{id}"/>
+    <label for="name">Name</label>
+    <input id="name" type="text" th:field="*{name}"><br/>
+    <label for="amount">Amount</label>
+    <input id="amount" type="number" th:field="*{amount}"><br/>
+    <button type="submit">修改消費紀錄</button>
+
+</form>
+
+</body>
+</html>
