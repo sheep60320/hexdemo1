@@ -1,6 +1,8 @@
 package com.systex.hexdemo1.configure;
 
 import com.systex.hexdemo1.adapter.out.db.RecordsCRUDJPARepository;
+import com.systex.hexdemo1.adapter.out.queue.RecordsRabbitMQMessage;
+import com.systex.hexdemo1.common.port.out.RecordPost;
 import com.systex.hexdemo1.common.port.out.RecordsReposiotry;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,5 +13,10 @@ public class AppConfig {
     public RecordsReposiotry getRecordsRepository() {
         // real adapter implementation
         return new RecordsCRUDJPARepository();
+    }
+
+    @Bean
+    public RecordPost getPost() {
+        return new RecordsRabbitMQMessage();
     }
 }

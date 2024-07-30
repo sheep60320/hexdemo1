@@ -2,6 +2,7 @@ package com.systex.hexdemo1.adapter.in;
 
 import com.systex.hexdemo1.common.domain.Expense;
 import com.systex.hexdemo1.common.port.in.KeepingRecord;
+import com.systex.hexdemo1.common.port.out.RecordPost;
 import com.systex.hexdemo1.common.port.out.RecordsReposiotry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -12,15 +13,19 @@ import java.util.List;
 public class Recorder implements KeepingRecord {
     @Autowired
     private RecordsReposiotry reposiotry;
+    @Autowired
+    private RecordPost post;
 
     @Override
     public Expense addRecord(Expense expense) {
         // maybe add other logic
+        post.postAddMessage(expense);
         return reposiotry.addRecord(expense);
     }
 
     @Override
     public Expense updateRecord(Expense expense) {
+        post.postModifyMessage(expense);
         return reposiotry.modifyRecord(expense);
     }
 
