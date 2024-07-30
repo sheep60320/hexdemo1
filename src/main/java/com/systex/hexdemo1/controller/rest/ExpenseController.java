@@ -1,7 +1,8 @@
-package com.systex.hexdemo1.controller;
+package com.systex.hexdemo1.controller.rest;
 
+import com.systex.hexdemo1.common.domain.Expense;
+import com.systex.hexdemo1.common.port.in.KeepingRecord;
 import com.systex.hexdemo1.controller.form.ExpenseForm;
-import com.systex.hexdemo1.entity.ExpenseEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,64 +18,48 @@ public class ExpenseController {
     private static final String LIST_ALL_EXPENSES = "expenses";
     private static final String ADD_MODIFY_EXPENSE_FORM = "expenseForm";
     @Autowired
-    private com.systex.hexdemo1.repsitory.ExpenseCRUDRepository repository;
+    private KeepingRecord keepingRecord;
 
     @GetMapping("/records/all")
     public String listAll(Model model) {
-        Iterable<ExpenseEntity> expenses = repository.findAll();
-//        List<Expense> expenses = new ArrayList<>();
-//        repository.findAll().forEach(expense -> expenses.add(expense));
-        model.addAttribute(LIST_ALL_EXPENSES, expenses);
+        model.addAttribute(LIST_ALL_EXPENSES, keepingRecord.listRecords());
         return "records/list";
     }
 
     @GetMapping("/records/delete")
     public String delete(@RequestParam Long id) {
-        if (!repository.findById(id).isPresent()) {
-            throw new com.systex.hexdemo1.exception.IDNotFoundEception(id);
-        }
-        repository.deleteById(id);
+        keepingRecord.deleteRecord(id);
         return "redirect:/records/all";
     }
 
     @GetMapping("/records/add")
     public String showAdd(Model model) {
-        ExpenseForm f = new ExpenseForm();
-        model.addAttribute(ADD_MODIFY_EXPENSE_FORM, f);
+        model.addAttribute(ADD_MODIFY_EXPENSE_FORM, new ExpenseForm());
         return "records/add";
     }
 
     @PostMapping("/records/add")
     public String storeAdd(ExpenseForm f) {
-        log.info("get a form as:{}", f);
-        ExpenseEntity e = new ExpenseEntity();
-        BeanUtils.copyProperties(f, e);
-        repository.save(e);
+        Expense expense = new Expense();
+        BeanUtils.copyProperties(f, expense);
+        keepingRecord.addRecord(expense);
         return "redirect:/records/all";
     }
 
     @GetMapping("/records/modify")
     public String showModify(@RequestParam Long id, Model model) {
-        if (repository.findById(id).isEmpty()) {
-            throw new com.systex.hexdemo1.exception.IDNotFoundEception(id);
-        }
-        // load data from db
-        ExpenseEntity expenseEntity = repository.findById(id).get();
+        Expense expense = keepingRecord.getRecord(id);
         ExpenseForm f = new ExpenseForm();
-        // entity ==> form
-        BeanUtils.copyProperties(expenseEntity, f);
+        BeanUtils.copyProperties(expense, f);
         model.addAttribute(ADD_MODIFY_EXPENSE_FORM, f);
         return "records/modify";
     }
 
     @PostMapping("/records/modify")
     public String storeModify(ExpenseForm f) {
-        // form==>entity==>db
-        ExpenseEntity expenseEntity = repository.findById(f.getId()).get();
-        BeanUtils.copyProperties(f, expenseEntity);
-        repository.save(expenseEntity);
+        Expense e = keepingRecord.getRecord(f.getId());
+        BeanUtils.copyProperties(f, e);
+        keepingRecord.updateRecord(e);
         return "redirect:/records/all";
     }
-
-
 }
